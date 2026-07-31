@@ -4,6 +4,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-andreia-lightest: oklch(0.81 0.106 227.5);
+  --color-andreia-light: oklch(0.83 0.148 209.5);
+  --color-andreia: oklch(0.635 0.183 250.5);
+  --color-andreia-dark: oklch(0.5 0.176 257);
+  --color-andreia-darkest: oklch(0.37 0.144 259);
+  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+}
+
+
 /*
  * Design system definition.
  *
