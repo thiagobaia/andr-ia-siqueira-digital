@@ -153,3 +153,58 @@
     color: var(--color-foreground);
   }
 }
+
+:root {
+  --radius: 0.875rem;
+  --primary: var(--color-andreia);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.02 240);
+  --secondary-foreground: var(--color-andreia-darkest);
+  --accent: var(--color-andreia-light);
+  --accent-foreground: var(--color-andreia-darkest);
+  --ring: var(--color-andreia);
+  --foreground: oklch(0.25 0.03 258);
+  --muted-foreground: oklch(0.5 0.02 258);
+  --gradient-andreia: linear-gradient(135deg, var(--color-andreia-darkest), var(--color-andreia-dark) 55%, var(--color-andreia) 100%);
+  --gradient-cyan: linear-gradient(120deg, var(--color-andreia) 0%, var(--color-andreia-light) 100%);
+  --shadow-card: 0 18px 45px -22px color-mix(in oklab, var(--color-andreia-darkest) 45%, transparent);
+  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--color-andreia-light) 35%, transparent), 0 25px 60px -30px color-mix(in oklab, var(--color-andreia) 60%, transparent);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+@utility bg-gradient-andreia {
+  background-image: var(--gradient-andreia);
+}
+
+@utility bg-gradient-cyan {
+  background-image: var(--gradient-cyan);
+}
+
+@utility shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+@utility shadow-glow {
+  box-shadow: var(--shadow-glow);
+}
+
+@utility text-gradient-andreia {
+  background-image: var(--gradient-cyan);
+  background-clip: text;
+  color: transparent;
+}
+
+@utility section-pad {
+  padding-block: 4.5rem;
+  @media (width >= 1024px) {
+    padding-block: 6.5rem;
+  }
+}
