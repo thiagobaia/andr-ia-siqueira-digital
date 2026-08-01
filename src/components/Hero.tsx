@@ -1,5 +1,5 @@
 import { ArrowRight, HeartHandshake } from "lucide-react";
-import foto from "@/assets/foto-andreia.png.asset.json";
+import foto from "@/assets/foto-andreia.png";
 
 export function Hero() {
   return (
@@ -46,7 +46,7 @@ export function Hero() {
 
         <div className="relative flex justify-center lg:justify-end">
           <img
-            src={foto.url}
+            src={foto}
             alt="Deputada Federal Andréia Siqueira"
             className="relative z-10 w-[300px] max-w-full drop-shadow-2xl sm:w-[380px] lg:w-[440px]"
             loading="eager"

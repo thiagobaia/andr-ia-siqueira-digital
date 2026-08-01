@@ -1,6 +1,6 @@
 import { Quote } from "lucide-react";
-import plenaria from "@/assets/plenaria.png.asset.json";
-import abraco from "@/assets/abraco.png.asset.json";
+import plenaria from "@/assets/plenaria.png";
+import abraco from "@/assets/abraco.png";
 
 export function About() {
   return (
@@ -9,13 +9,13 @@ export function About() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div className="grid grid-cols-2 gap-4">
             <img
-              src={abraco.url}
+              src={abraco}
               alt="Andréia Siqueira abraçando uma moradora do Baixo Tocantins"
               className="col-span-2 h-72 w-full rounded-2xl object-cover shadow-card sm:h-96"
               loading="lazy"
             />
             <img
-              src={plenaria.url}
+              src={plenaria}
               alt="Andréia Siqueira discursando na tribuna da Câmara dos Deputados"
               className="h-44 w-full rounded-2xl object-cover shadow-card sm:h-56"
               loading="lazy"

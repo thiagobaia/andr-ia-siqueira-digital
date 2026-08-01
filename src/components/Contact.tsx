@@ -8,11 +8,30 @@ export function Contact() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSending(true);
+    
     const form = e.currentTarget;
+    const formData = new FormData(form);
+    const nome = formData.get("nome") as string;
+    const email = formData.get("email") as string;
+    const municipio = formData.get("municipio") as string;
+    const mensagem = formData.get("mensagem") as string;
+
+    // Substitua pelo número real do WhatsApp com código do país e DDD (Ex: 5591999999999)
+    const numeroWhatsApp = "5591999999999";
+
+    const texto = `*Nova mensagem do site:*%0A` +
+                  `*Nome:* ${nome}%0A` +
+                  `*E-mail:* ${email}%0A` +
+                  `*Município:* ${municipio || "Não informado"}%0A` +
+                  `*Mensagem:* ${mensagem}`;
+
+    const url = `https://wa.me/${numeroWhatsApp}?text=${texto}`;
+
     setTimeout(() => {
+      window.open(url, "_blank");
       setSending(false);
       form.reset();
-      toast.success("Mensagem registrada! O mandato entrará em contato.");
+      toast.success("Redirecionando para o WhatsApp!");
     }, 600);
   };
 
@@ -32,9 +51,9 @@ export function Contact() {
           <ul className="mt-8 space-y-4">
             {[
               { icon: MapPin, label: "Câmara dos Deputados – Brasília/DF" },
-              { icon: Phone, label: "61 - 0000-0000" },
+              { icon: Phone, label: "(61) 3215-5408" },
               { icon: Instagram, label: "@andreiasiqueira" },
-              { icon: Mail, label: "E-mail institucional — envie pelo formulário" },
+              { icon: Mail, label: "dep.andreiasiqueira@camara.leg.br" },
             ].map(({ icon: Icon, label }) => (
               <li key={label} className="flex items-center gap-4 rounded-2xl bg-secondary p-4">
                 <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-cyan text-primary-foreground">
@@ -90,7 +109,7 @@ export function Contact() {
               disabled={sending}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-cyan px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-primary-foreground transition-transform hover:scale-[1.02] disabled:opacity-70"
             >
-              <Send className="h-4 w-4" /> {sending ? "Enviando..." : "Enviar mensagem"}
+              <Send className="h-4 w-4" /> {sending ? "Enviando..." : "Enviar para o WhatsApp"}
             </button>
           </div>
         </form>

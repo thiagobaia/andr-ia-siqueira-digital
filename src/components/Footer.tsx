@@ -1,5 +1,5 @@
 import { Instagram } from "lucide-react";
-import logo from "@/assets/logo-andreia.png.asset.json";
+import logo from "@/assets/logo-andreia.png";
 
 const links = [
   { href: "#inicio", label: "Início" },
@@ -15,7 +15,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-8 px-5 md:grid-cols-[1.2fr_1fr]">
         <div>
           <img
-            src={logo.url}
+            src={logo}
             alt="Deputada Federal Andréia Siqueira"
             className="h-16 w-auto"
             loading="lazy"
@@ -46,7 +46,7 @@ export function Footer() {
         </nav>
       </div>
       <div className="mx-auto mt-10 max-w-7xl border-t border-primary-foreground/10 px-5 pt-6 text-xs text-primary-foreground/60">
-        <p>Câmara dos Deputados – Brasília/DF · 61 - 0000-0000</p>
+        <p>Câmara dos Deputados – Brasília/DF - (61) 3215-5408</p>
         <p className="mt-1">
           © {new Date().getFullYear()} Deputada Federal Andréia Siqueira — A Federal da Nossa Gente.
           Todos os direitos reservados.

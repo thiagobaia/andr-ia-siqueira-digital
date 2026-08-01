@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 660" role="img" aria-label="Abraço comunitário">
+  <rect width="900" height="660" rx="36" fill="#fff8ec"/>
+  <circle cx="310" cy="260" r="140" fill="#0f3d4f"/>
+  <circle cx="560" cy="250" r="150" fill="#21c7c7"/>
+  <path d="M240 500c40-70 102-110 160-110 60 0 122 39 162 110" fill="#f5c542"/>
+  <path d="M325 250c0-55 44-100 100-100s100 45 100 100" fill="#f0c28b"/>
+  <text x="450" y="610" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#0f3d4f">Cuidado e presença</text>
+</svg>

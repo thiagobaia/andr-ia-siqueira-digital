@@ -1,5 +1,5 @@
 import { Stethoscope, HandHeart, ShieldCheck } from "lucide-react";
-import carreta from "@/assets/carreta.png.asset.json";
+import carreta from "@/assets/carreta.jpeg";
 
 const projects = [
   {
@@ -29,9 +29,9 @@ export function Projects() {
         </h2>
 
         <img
-          src={carreta.url}
+          src={carreta}
           alt="Carreta da Saúde do Instituto Siqueira levando atendimento às comunidades"
-          className="mt-10 w-full rounded-3xl object-cover shadow-glow"
+          className="mt-10 w-full max-h-150 rounded-3xl object-cover shadow-glow"
           loading="lazy"
         />
 

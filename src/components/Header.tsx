@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Menu, X, Instagram } from "lucide-react";
-import logo from "@/assets/logo-andreia.png.asset.json";
+import logo from "../assets/logo-andreia.png";
 
 const links = [
   { href: "#inicio", label: "Início" },
@@ -18,7 +18,7 @@ export function Header() {
       <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-3">
         <a href="#inicio" className="flex min-w-0 items-center">
           <img
-            src={logo.url}
+            src={logo}
             alt="Deputada Federal Andréia Siqueira — A Federal da Nossa Gente"
             className="h-11 w-auto shrink-0 lg:h-14"
             loading="eager"
