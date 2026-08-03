@@ -46,7 +46,7 @@ export function Footer() {
         </nav>
       </div>
       <div className="mx-auto mt-10 max-w-7xl border-t border-primary-foreground/10 px-5 pt-6 text-xs text-primary-foreground/60">
-        <p>Câmara dos Deputados – Brasília/DF - (61) 3215-5408</p>
+        <p>Câmara dos Deputados – Brasília/DF - (94) 99309-5185</p>
         <p className="mt-1">
           © {new Date().getFullYear()} Deputada Federal Andréia Siqueira — A Federal da Nossa Gente.
           Todos os direitos reservados.

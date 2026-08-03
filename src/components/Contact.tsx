@@ -17,7 +17,7 @@ export function Contact() {
     const mensagem = formData.get("mensagem") as string;
 
     // Substitua pelo número real do WhatsApp com código do país e DDD (Ex: 5591999999999)
-    const numeroWhatsApp = "5591999999999";
+    const numeroWhatsApp = "5594993095185";
 
     const texto = `*Nova mensagem do site:*%0A` +
                   `*Nome:* ${nome}%0A` +
@@ -51,7 +51,7 @@ export function Contact() {
           <ul className="mt-8 space-y-4">
             {[
               { icon: MapPin, label: "Câmara dos Deputados – Brasília/DF" },
-              { icon: Phone, label: "(61) 3215-5408" },
+              { icon: Phone, label: "(94) 99309-5185" },
               { icon: Instagram, label: "@andreiasiqueira" },
               { icon: Mail, label: "dep.andreiasiqueira@camara.leg.br" },
             ].map(({ icon: Icon, label }) => (
