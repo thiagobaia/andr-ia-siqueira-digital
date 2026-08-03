@@ -7,6 +7,7 @@ const links = [
   { href: "#bandeiras", label: "Bandeiras de Luta" },
   { href: "#projetos", label: "Projetos" },
   { href: "#contato", label: "Contato" },
+  { href: "/privacidade", label: "Política de Privacidade" },
 ];
 
 export function Footer() {
