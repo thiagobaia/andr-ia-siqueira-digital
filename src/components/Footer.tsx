@@ -8,6 +8,7 @@ const links = [
   { href: "#projetos", label: "Projetos" },
   { href: "#contato", label: "Contato" },
   { href: "/privacidade", label: "Política de Privacidade" },
+  { href: "/termos-de-uso", label: "Termos de Uso" },
 ];
 
 export function Footer() {

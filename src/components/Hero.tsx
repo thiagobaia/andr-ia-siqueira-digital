@@ -1,24 +1,36 @@
 import { ArrowRight, HeartHandshake } from "lucide-react";
 import foto from "@/assets/foto-andreia.png";
+import rio from "@/assets/Capa.png";
 
 export function Hero() {
   return (
-    <section id="inicio" className="relative overflow-hidden bg-gradient-andreia pt-28 lg:pt-32">
+    <section id="inicio" className="relative overflow-hidden bg-gradient-andreia pt-28 lg:pt-20">
+      <img
+        src={rio}
+        alt="Foto da Deputada Federal Andréia Siqueira"
+        className="flex h-[900px]  w-full object-cover object-top"
+      />
+      {/* 
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 20%, var(--color-andreia-light) 0, transparent 45%), radial-gradient(circle at 85% 70%, var(--color-andreia) 0, transparent 50%)",
+          backgroundImage: `url(${rio})`,
+          backgroundRepeat: "no-repeat",
+          width: "100%",
+          backgroundSize: "cover",
         }}
       />
-      <div className="relative mx-auto grid max-w-7xl items-end gap-10 px-5 pb-0 lg:grid-cols-[1.05fr_0.95fr]">
+     
+        <div className="relative mx-auto grid max-w-7xl items-end gap-10 px-5 pb-0 lg:grid-cols-[1.05fr_0.95fr] ">
         <div className="pb-14 lg:pb-24">
           <span className="inline-flex items-center gap-2 rounded-full border border-andreia-light/40 bg-andreia-light/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-andreia-lightest">
             Deputada Federal
           </span>
-          <h1 className="mt-6 text-4xl font-black uppercase leading-[1.05] text-primary-foreground sm:text-5xl lg:text-6xl">
+          <h1 className="mt-6 text-4xl font-medium uppercase leading-[1.05] text-primary-foreground sm:text-5xl lg:text-6xl">
             Do Baixo Tocantins
-            <span className="block text-gradient-andreia">até Brasília</span>
+            <span className="block font-black uppercase text-gray-50">
+              <p className=""></p>até Brasília
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-lg italic leading-relaxed text-primary-foreground/85">
             “Uma trajetória construída pela fé, pela família e pelo compromisso de cuidar das
@@ -43,16 +55,10 @@ export function Hero() {
             </a>
           </div>
         </div>
-
-        <div className="relative flex justify-center lg:justify-end">
-          <img
-            src={foto}
-            alt="Deputada Federal Andréia Siqueira"
-            className="relative z-10 w-[300px] max-w-full drop-shadow-2xl sm:w-[380px] lg:w-[440px]"
-            loading="eager"
-          />
-        </div>
       </div>
+      
+      
+      */}
     </section>
   );
 }

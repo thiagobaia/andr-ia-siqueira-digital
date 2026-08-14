@@ -10,44 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as Eleicoes2026RouteImport } from './routes/eleicoes2026'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-
+const Eleicoes2026Route = Eleicoes2026RouteImport.update({
+  id: '/eleicoes2026',
+  path: '/eleicoes2026',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
+  id: '/termos-de-uso',
+  path: '/termos-de-uso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/eleicoes2026': typeof Eleicoes2026Route
   '/privacidade': typeof PrivacidadeRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/eleicoes2026': typeof Eleicoes2026Route
   '/privacidade': typeof PrivacidadeRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/eleicoes2026': typeof Eleicoes2026Route
   '/privacidade': typeof PrivacidadeRoute
+  '/termos-de-uso': typeof TermosDeUsoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/privacidade'
+  fullPaths: '/' | '/eleicoes2026' | '/privacidade' | '/termos-de-uso'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/privacidade'
-  id: '__root__' | '/' | '/privacidade'
+  to: '/' | '/eleicoes2026' | '/privacidade' | '/termos-de-uso'
+  id: '__root__' | '/' | '/eleicoes2026' | '/privacidade' | '/termos-de-uso'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  Eleicoes2026Route: typeof Eleicoes2026Route
   PrivacidadeRoute: typeof PrivacidadeRoute
+  TermosDeUsoRoute: typeof TermosDeUsoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -59,6 +78,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/eleicoes2026': {
+      id: '/eleicoes2026'
+      path: '/eleicoes2026'
+      fullPath: '/eleicoes2026'
+      preLoaderRoute: typeof Eleicoes2026RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacidade': {
       id: '/privacidade'
       path: '/privacidade'
@@ -66,23 +92,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/termos-de-uso': {
+      id: '/termos-de-uso'
+      path: '/termos-de-uso'
+      fullPath: '/termos-de-uso'
+      preLoaderRoute: typeof TermosDeUsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  Eleicoes2026Route: Eleicoes2026Route,
   PrivacidadeRoute: PrivacidadeRoute,
+  TermosDeUsoRoute: TermosDeUsoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
