@@ -9,26 +9,16 @@ import perfil from "../assets/perfil.png"; // Importando os links de um arquivo 
 const LINKS = [
   {
     id: "1",
-    title: "Material de Campanha",
-    url: "#", // Mantenha '#' se não houver link ainda ou coloque a URL real
-  },
-  {
-    id: "2",
     title: "Editar minha foto de perfil - Moldura",
     url: "https://andreiasiqueira2026.com.br/molduras",
   },
   {
-    id: "3",
-    title: "Jingles",
-    url: "#",
-  },
-  {
-    id: "4",
+    id: "2",
     title: "Figurinhas do Whatsapp",
-    url: "#",
+    url: "https://andreiasiqueira2026.com.br/sticker-gallery",
   },
   {
-    id: "5",
+    id: "3",
     title: "Site",
     url: "https://andreiasiqueira2026.com.br",
   },

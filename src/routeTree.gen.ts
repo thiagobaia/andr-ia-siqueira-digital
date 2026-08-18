@@ -14,6 +14,7 @@ import { Route as Eleicoes2026RouteImport } from './routes/eleicoes2026'
 import { Route as LinktreeRouteImport } from './routes/linktree'
 import { Route as MoldurasRouteImport } from './routes/molduras'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as StickerGalleryRouteImport } from './routes/sticker-gallery'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
   path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StickerGalleryRoute = StickerGalleryRouteImport.update({
+  id: '/sticker-gallery',
+  path: '/sticker-gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
   path: '/termos-de-uso',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sticker-gallery': typeof StickerGalleryRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sticker-gallery': typeof StickerGalleryRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sticker-gallery': typeof StickerGalleryRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/linktree'
     | '/molduras'
     | '/privacidade'
+    | '/sticker-gallery'
     | '/termos-de-uso'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/linktree'
     | '/molduras'
     | '/privacidade'
+    | '/sticker-gallery'
     | '/termos-de-uso'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/linktree'
     | '/molduras'
     | '/privacidade'
+    | '/sticker-gallery'
     | '/termos-de-uso'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   LinktreeRoute: typeof LinktreeRoute
   MoldurasRoute: typeof MoldurasRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  StickerGalleryRoute: typeof StickerGalleryRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sticker-gallery': {
+      id: '/sticker-gallery'
+      path: '/sticker-gallery'
+      fullPath: '/sticker-gallery'
+      preLoaderRoute: typeof StickerGalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos-de-uso': {
       id: '/termos-de-uso'
       path: '/termos-de-uso'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   LinktreeRoute: LinktreeRoute,
   MoldurasRoute: MoldurasRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  StickerGalleryRoute: StickerGalleryRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
 }
 export const routeTree = rootRouteImport

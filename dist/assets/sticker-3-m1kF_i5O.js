@@ -1,0 +1,1 @@
+var e=`/assets/sticker-3-wm1sDCBA.webp`;export{e as default};

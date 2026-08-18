@@ -1,0 +1,1 @@
+var e=`/assets/sticker-1-CpMuIVbL.webp`;export{e as default};

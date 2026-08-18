@@ -1,0 +1,1 @@
+var e=`/assets/sticker-5-ogwBhdrW.webp`;export{e as default};

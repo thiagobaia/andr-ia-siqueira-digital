@@ -1,0 +1,1 @@
+var e=`/assets/sticker-15-CfaI5hkx.webp`;export{e as default};

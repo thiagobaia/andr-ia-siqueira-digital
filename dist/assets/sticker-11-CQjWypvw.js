@@ -1,0 +1,1 @@
+var e=`/assets/sticker-11-CGncKo-F.webp`;export{e as default};
