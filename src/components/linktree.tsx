@@ -90,12 +90,12 @@ export default function Linktree() {
             >
               {/* MODIFICAÇÃO AQUI: */}
               {/* Ícone da Esquerda - img substituída por ChevronRight */}
-              <div className="w-[68px] h-[68px] flex-shrink-0 flex items-center justify-center z-10 text-white/90">
-                <ChevronRight className="w-8 h-8 drop-shadow-md" />
+              <div className="w-[48px] h-[48px] flex-shrink-0 flex items-center justify-center z-10 text-white/90">
+                <ChevronRight className="w-5 h-5 drop-shadow-md" />
               </div>
 
               {/* Texto Centralizado Absoluto */}
-              <span className="absolute inset-0 flex items-center justify-center text-white font-semibold text-[15px] pointer-events-none px-16 leading-tight drop-shadow-md centered-axis-x text-center">
+              <span className="absolute inset-0 flex items-center justify-center text-white font-semibold text-[12px] md:text-[14px] pointer-events-none px-10 leading-tight drop-shadow-md centered-axis-x text-center">
                 {link.title}
               </span>
             </a>
