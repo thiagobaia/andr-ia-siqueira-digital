@@ -3,6 +3,10 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -67,6 +71,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@rolldown/binding-linux-x64-gnu": "^1.2.4",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
@@ -81,5 +86,9 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^8.1.5"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "^1.2.4",
+    "@rolldown/binding-linux-x64-musl": "^1.2.4"
   }
 }
