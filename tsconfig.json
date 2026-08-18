@@ -5,7 +5,9 @@
     "jsx": "react-jsx",
     "module": "ESNext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "types": ["node", "vite/client"],
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
 
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
