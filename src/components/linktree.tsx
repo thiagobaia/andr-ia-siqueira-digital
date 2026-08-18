@@ -1,7 +1,7 @@
 import React from "react";
 // Importações do lucid-react mantidas e utilizadas
 import { Share2, Sparkles, ChevronRight } from "lucide-react";
-import perfil from "../assets/perfil.png"; // Importando os links de um arquivo separado
+import perfil from "../assets/FOTO-PERFIL.png"; // Importando os links de um arquivo separado
 
 // Defina os links da sua campanha aqui
 // A propriedade 'iconUrl' não é mais usada para renderizar imagens à esquerda na lista,
@@ -9,23 +9,28 @@ import perfil from "../assets/perfil.png"; // Importando os links de um arquivo 
 const LINKS = [
   {
     id: "1",
-    title: "Site",
-    url: "https://andreiasiqueira2026.com.br",
-  },
-  {
-    id: "2",
-    title: "Whatsapp Ascom Andréia Siqueira",
+    title: (
+      <>
+        WHATSAPP <br /> ASCOM ANDRÉIA SIQUEIRA
+      </>
+    ),
     url: "https://wa.me/559493095185",
   },
   {
+    id: "2",
+    title: "FIGURINHAS DO WHATSAPP",
+    url: "https://andreiasiqueira2026.com.br/sticker-gallery",
+  },
+  {
     id: "3",
-    title: "Editar minha foto de perfil - Moldura",
+    title: "EDITAR FOTO DE PERFIL - MOLDURA",
     url: "https://andreiasiqueira2026.com.br/molduras",
   },
   {
     id: "4",
-    title: "Figurinhas do Whatsapp",
-    url: "https://andreiasiqueira2026.com.br/sticker-gallery",
+
+    title: "SITE OFICIAL",
+    url: "https://andreiasiqueira2026.com.br",
   },
 ];
 
@@ -50,7 +55,7 @@ export default function Linktree() {
       {/* ==================================================== */}
       {/* CONTEÚDO PRINCIPAL                                    */}
       {/* ==================================================== */}
-      <div className="relative z-20 w-full max-w-md px-6 pt-8 pb-12 flex flex-col min-h-screen">
+      <div className="relative z-20 w-full max-w-md px-16 pt-8 pb-12 flex flex-col min-h-screen">
         {/* HEADER: Botões do topo */}
         <div className="w-full flex justify-between items-center mb-6">
           <button className="w-11 h-11 rounded-full bg-black/30 flex items-center justify-center backdrop-blur-md border border-white/10 text-white hover:bg-black/50 transition-colors shadow-lg">
@@ -68,23 +73,9 @@ export default function Linktree() {
             <img
               src={perfil}
               alt="Andreia Siqueira"
-              className="w-80 h-80 rounded-full object-cover object-top border-[3px] border-transparent shadow-xl"
+              className="w-80  rounded-md object-cover object-bottom border-[3px] border-transparent shadow-xl"
             />
-            {/* Badge do Número no rodapé da foto */}
-            <div
-              className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground font-display font-black text-2xl px-4 py-0.5 rounded-radius-md shadow-glow tracking-widest z-10 border border-white/20"
-              style={{ transform: "rotate(-3deg)" }}
-            >
-              4010
-            </div>
           </div>
-
-          <h1 className="font-display text-3xl font-bold text-white mt-8 drop-shadow-md">
-            Andreia Siqueira
-          </h1>
-          <p className="text-white/90 font-medium text-sm mt-1 drop-shadow-sm text-center px-4">
-            A federal da nossa gente.
-          </p>
         </div>
 
         {/* LISTA DE LINKS: Glassmorphism */}
@@ -104,14 +95,9 @@ export default function Linktree() {
               </div>
 
               {/* Texto Centralizado Absoluto */}
-              <span className="absolute inset-0 flex items-center justify-center text-white font-semibold text-[15px] pointer-events-none px-16 leading-tight drop-shadow-md centered-axis-x">
+              <span className="absolute inset-0 flex items-center justify-center text-white font-semibold text-[15px] pointer-events-none px-16 leading-tight drop-shadow-md centered-axis-x text-center">
                 {link.title}
               </span>
-
-              {/* Ícone da Direita Mantido (também ChevronRight mas menor) */}
-              <div className="ml-auto w-12 h-full flex items-center justify-center text-white/60 group-hover:text-white transition-colors z-10">
-                <ChevronRight className="w-5 h-5" />
-              </div>
             </a>
           ))}
         </div>
