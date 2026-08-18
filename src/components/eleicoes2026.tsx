@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 // Em React puro com Vite/CRA, você importa a imagem diretamente:
 import andreiaAsset from "@/assets/perfil.png";
@@ -460,12 +461,12 @@ export default function Eleicoes2026() {
               nº 9.504/97. Página sem uso de conteúdo sintético gerado por Inteligência Artificial.
             </p>
             <div className="mt-4 flex flex-wrap gap-4 font-semibold">
-              <a href="/privacidade" className="hover:text-andreia-light">
+              <Link to="/privacidade" className="hover:text-andreia-light">
                 Política de Privacidade
-              </a>
-              <a href="/termos-de-uso" className="hover:text-andreia-light">
+              </Link>
+              <Link to="/termos-de-uso" className="hover:text-andreia-light">
                 Termos de Uso
-              </a>
+              </Link>
               <a
                 href={`mailto:${CANDIDATA.email}?subject=Descadastro`}
                 className="hover:text-andreia-light"

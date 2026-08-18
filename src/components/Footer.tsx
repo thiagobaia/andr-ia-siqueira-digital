@@ -1,12 +1,16 @@
 import { Instagram } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import logo from "@/assets/logo-andreia.png";
 
-const links = [
+const sectionLinks = [
   { href: "#inicio", label: "Início" },
   { href: "#raizes", label: "Raízes" },
   { href: "#bandeiras", label: "Bandeiras de Luta" },
   { href: "#projetos", label: "Projetos" },
   { href: "#contato", label: "Contato" },
+];
+
+const legalLinks = [
   { href: "/privacidade", label: "Política de Privacidade" },
   { href: "/termos-de-uso", label: "Termos de Uso" },
 ];
@@ -28,7 +32,7 @@ export function Footer() {
           </p>
         </div>
         <nav className="grid gap-2 md:justify-items-end">
-          {links.map((l) => (
+          {sectionLinks.map((l) => (
             <a
               key={l.href}
               href={l.href}
@@ -36,6 +40,15 @@ export function Footer() {
             >
               {l.label}
             </a>
+          ))}
+          {legalLinks.map((l) => (
+            <Link
+              key={l.href}
+              to={l.href}
+              className="text-sm font-semibold text-primary-foreground/80 transition-colors hover:text-andreia-light"
+            >
+              {l.label}
+            </Link>
           ))}
           <a
             href="https://instagram.com/andreiasiqueira"

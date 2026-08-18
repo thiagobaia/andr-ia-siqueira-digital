@@ -55,12 +55,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          <a
-            href="/"
+          <Link
+            to="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
             Go home
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -75,8 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Andréia Siqueira | Deputada Federal" },
       {
         name: "description",
-        content:
-          "Site oficial da Deputada Federal Andréia Siqueira — A Federal da Nossa Gente.",
+        content: "Site oficial da Deputada Federal Andréia Siqueira — A Federal da Nossa Gente.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
