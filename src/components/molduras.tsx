@@ -4,7 +4,7 @@ import "react-image-crop/dist/ReactCrop.css";
 import { Upload, Download } from "lucide-react";
 
 // Defina aqui o caminho da sua única moldura (coloque o arquivo na pasta public/molduras)
-const MOLDURA_PADRAO = "/molduras/moldura-1.png";
+const MOLDURA_PADRAO = "/imagens-molduras/moldura-1.png";
 
 const INITIAL_CROP: Crop = {
   unit: "%",
