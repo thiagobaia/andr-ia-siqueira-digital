@@ -9,18 +9,23 @@ import perfil from "../assets/perfil.png"; // Importando os links de um arquivo 
 const LINKS = [
   {
     id: "1",
+    title: "Site",
+    url: "https://andreiasiqueira2026.com.br",
+  },
+  {
+    id: "2",
+    title: "Whatsapp Ascom Andréia Siqueira",
+    url: "https://wa.me/559493095185",
+  },
+  {
+    id: "3",
     title: "Editar minha foto de perfil - Moldura",
     url: "https://andreiasiqueira2026.com.br/molduras",
   },
   {
-    id: "2",
+    id: "4",
     title: "Figurinhas do Whatsapp",
     url: "https://andreiasiqueira2026.com.br/sticker-gallery",
-  },
-  {
-    id: "3",
-    title: "Site",
-    url: "https://andreiasiqueira2026.com.br",
   },
 ];
 
