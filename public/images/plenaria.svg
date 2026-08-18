@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 660" role="img" aria-label="Plenária">
-  <rect width="900" height="660" rx="36" fill="#f3f7fb"/>
-  <rect x="120" y="180" width="660" height="300" rx="30" fill="#0f3d4f"/>
-  <rect x="170" y="230" width="220" height="140" rx="24" fill="#21c7c7"/>
-  <rect x="430" y="230" width="280" height="24" rx="12" fill="#ffffff" opacity="0.95"/>
-  <rect x="430" y="276" width="220" height="24" rx="12" fill="#f5c542" opacity="0.95"/>
-  <rect x="430" y="322" width="180" height="24" rx="12" fill="#ffffff" opacity="0.9"/>
-  <text x="450" y="610" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#0f3d4f">Representando o Pará</text>
-</svg>

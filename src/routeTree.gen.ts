@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as Eleicoes2026RouteImport } from './routes/eleicoes2026'
+import { Route as LinktreeRouteImport } from './routes/linktree'
+import { Route as MoldurasRouteImport } from './routes/molduras'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
 
@@ -22,6 +24,16 @@ const IndexRoute = IndexRouteImport.update({
 const Eleicoes2026Route = Eleicoes2026RouteImport.update({
   id: '/eleicoes2026',
   path: '/eleicoes2026',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LinktreeRoute = LinktreeRouteImport.update({
+  id: '/linktree',
+  path: '/linktree',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MoldurasRoute = MoldurasRouteImport.update({
+  id: '/molduras',
+  path: '/molduras',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
@@ -38,12 +50,16 @@ const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
+  '/linktree': typeof LinktreeRoute
+  '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
+  '/linktree': typeof LinktreeRoute
+  '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
 }
@@ -51,20 +67,43 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
+  '/linktree': typeof LinktreeRoute
+  '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/eleicoes2026' | '/privacidade' | '/termos-de-uso'
+  fullPaths:
+    | '/'
+    | '/eleicoes2026'
+    | '/linktree'
+    | '/molduras'
+    | '/privacidade'
+    | '/termos-de-uso'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/eleicoes2026' | '/privacidade' | '/termos-de-uso'
-  id: '__root__' | '/' | '/eleicoes2026' | '/privacidade' | '/termos-de-uso'
+  to:
+    | '/'
+    | '/eleicoes2026'
+    | '/linktree'
+    | '/molduras'
+    | '/privacidade'
+    | '/termos-de-uso'
+  id:
+    | '__root__'
+    | '/'
+    | '/eleicoes2026'
+    | '/linktree'
+    | '/molduras'
+    | '/privacidade'
+    | '/termos-de-uso'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   Eleicoes2026Route: typeof Eleicoes2026Route
+  LinktreeRoute: typeof LinktreeRoute
+  MoldurasRoute: typeof MoldurasRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
 }
@@ -83,6 +122,20 @@ declare module '@tanstack/react-router' {
       path: '/eleicoes2026'
       fullPath: '/eleicoes2026'
       preLoaderRoute: typeof Eleicoes2026RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/linktree': {
+      id: '/linktree'
+      path: '/linktree'
+      fullPath: '/linktree'
+      preLoaderRoute: typeof LinktreeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/molduras': {
+      id: '/molduras'
+      path: '/molduras'
+      fullPath: '/molduras'
+      preLoaderRoute: typeof MoldurasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacidade': {
@@ -105,6 +158,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   Eleicoes2026Route: Eleicoes2026Route,
+  LinktreeRoute: LinktreeRoute,
+  MoldurasRoute: MoldurasRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
 }
