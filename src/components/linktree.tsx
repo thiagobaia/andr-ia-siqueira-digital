@@ -1,7 +1,7 @@
 import React from "react";
 // Importações do lucid-react mantidas e utilizadas
 import { Share2, Sparkles, ChevronRight } from "lucide-react";
-import perfil from "../assets/FOTO-PERFIL.png"; // Importando os links de um arquivo separado
+import perfil from "../assets/FOTO-PERFIL.webp"; // Importando os links de um arquivo separado
 
 // Defina os links da sua campanha aqui
 // A propriedade 'iconUrl' não é mais usada para renderizar imagens à esquerda na lista,
@@ -23,7 +23,7 @@ const LINKS = [
   },
   {
     id: "3",
-    title: "EDITAR FOTO DE PERFIL - MOLDURA",
+    title: "FOTO DE PERFIL - MOLDURA",
     url: "https://andreiasiqueira2026.com.br/molduras",
   },
   {
@@ -36,7 +36,7 @@ const LINKS = [
 
 export default function Linktree() {
   return (
-    <div className="relative min-h-screen bg-andreia-darkest font-sans flex flex-col items-center overflow-hidden">
+    <div className="relative min-h-screen bg-andreia-darkest font-sans flex flex-col items-center overflow-hidden ">
       {/* ==================================================== */}
       {/* BACKGROUND (Fundo com gradiente, foto e número 4010) */}
       {/* ==================================================== */}
@@ -86,11 +86,11 @@ export default function Linktree() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative w-full h-[68px] flex items-center rounded-radius-xl bg-white/15 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all group shadow-card overflow-hidden"
+              className="relative w-full h-[68px] flex items-center rounded-md bg-white/15 backdrop-blur-md border border-white/20 hover:bg-white/25 transition-all group shadow-card overflow-hidden"
             >
               {/* MODIFICAÇÃO AQUI: */}
               {/* Ícone da Esquerda - img substituída por ChevronRight */}
-              <div className="w-[48px] h-[48px] flex-shrink-0 flex items-center justify-center z-10 text-white/90">
+              <div className="w-[48px] h-[48px]  flex items-center justify-center z-10 text-white/90">
                 <ChevronRight className="w-5 h-5 drop-shadow-md" />
               </div>
 
