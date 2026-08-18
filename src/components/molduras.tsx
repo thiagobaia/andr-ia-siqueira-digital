@@ -1,35 +1,21 @@
 import React, { useState, useRef } from "react";
-import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from "react-image-crop";
-import "react-image-crop/dist/ReactCrop.css";
 import { Upload, Download } from "lucide-react";
 
-// Defina aqui o caminho da sua única moldura (coloque o arquivo na pasta public/molduras)
+// Defina aqui o caminho da sua única moldura (coloque o arquivo na pasta public/imagens-molduras)
 const MOLDURA_PADRAO = "/imagens-molduras/moldura-1.png";
-
-const INITIAL_CROP: Crop = {
-  unit: "%",
-  x: 0,
-  y: 0,
-  width: 100,
-  height: 100,
-};
-
-// Centraliza e expande o corte inicial para pegar 100% da área possível
-function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number): Crop {
-  return centerCrop(
-    makeAspectCrop({ unit: "%", width: 100 }, aspect, mediaWidth, mediaHeight),
-    mediaWidth,
-    mediaHeight,
-  );
-}
 
 export default function Molduras() {
   const [imgSrc, setImgSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState<Crop>(INITIAL_CROP);
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop | undefined>();
   const [scale, setScale] = useState<number>(1);
   const [bgColor, setBgColor] = useState<string>("transparent");
+
+  // Estados para controlar o arrastar (Pan)
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Lida com o upload da foto do usuário
   function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -45,23 +31,48 @@ export default function Molduras() {
       return;
     }
 
-    setCrop(INITIAL_CROP);
-    setCompletedCrop(undefined);
+    // Reseta posição e zoom ao subir nova imagem
+    setPosition({ x: 0, y: 0 });
+    setScale(1);
+
     const reader = new FileReader();
     reader.addEventListener("load", () => setImgSrc(reader.result?.toString() || ""));
     reader.readAsDataURL(file);
     e.target.value = "";
   }
 
-  function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-    const { width, height } = e.currentTarget;
-    imgRef.current = e.currentTarget;
-    setCrop(centerAspectCrop(width, height, 1)); // Força proporção quadrada 1:1
-  }
+  // Eventos de Toque / Mouse para mover a foto
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    });
+    // Captura o ponteiro para continuar arrastando mesmo se o dedo sair rápido do elemento
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
 
-  // Função exata para o Canvas não vazar a foto da linha branca
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y,
+    });
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
+  // Função para centralizar a foto novamente
+  const centerImage = () => {
+    setPosition({ x: 0, y: 0 });
+  };
+
+  // Função que converte o visual da tela em 1080x1080
   const handleDownload = () => {
-    if (!imgRef.current) {
+    if (!imgRef.current || !containerRef.current) {
       alert("Por favor, faça o upload de uma foto primeiro.");
       return;
     }
@@ -71,8 +82,8 @@ export default function Molduras() {
 
     if (!ctx) return;
 
+    // GARANTIA: Saída estritamente em 1080x1080
     const OUTPUT_SIZE = 1080;
-
     canvas.width = OUTPUT_SIZE;
     canvas.height = OUTPUT_SIZE;
 
@@ -87,54 +98,37 @@ export default function Molduras() {
     ctx.save();
     ctx.beginPath();
 
-    // B. CORTE (MÁSCARA): Ajustado para 15 pixels de recuo
+    // B. CORTE (MÁSCARA CIRULAR): Ajustado para 15 pixels de recuo da moldura
     const radius = OUTPUT_SIZE / 2 - 15;
     ctx.arc(OUTPUT_SIZE / 2, OUTPUT_SIZE / 2, radius, 0, 2 * Math.PI);
     ctx.clip();
 
-    // C. Aplica o Zoom (scale) exatamente a partir do centro
-    ctx.translate(OUTPUT_SIZE / 2, OUTPUT_SIZE / 2);
-    ctx.scale(scale, scale);
-    ctx.translate(-OUTPUT_SIZE / 2, -OUTPUT_SIZE / 2);
-
+    // Referências para o cálculo
     const image = imgRef.current;
+    const containerW = containerRef.current.clientWidth;
 
-    // D. Pega exatamente a área que o usuário arrastou/selecionou no corte
-    if (completedCrop && completedCrop.width > 0 && completedCrop.height > 0) {
-      const scaleX = image.naturalWidth / image.width;
-      const scaleY = image.naturalHeight / image.height;
-      ctx.drawImage(
-        image,
-        completedCrop.x * scaleX,
-        completedCrop.y * scaleY,
-        completedCrop.width * scaleX,
-        completedCrop.height * scaleY,
-        0,
-        0,
-        OUTPUT_SIZE,
-        OUTPUT_SIZE,
-      );
-    } else {
-      const imgAspect = image.naturalWidth / image.naturalHeight;
+    // C. Calcula a proporção entre a tela do usuário e os 1080px finais
+    const ratio = OUTPUT_SIZE / containerW;
 
-      let sx = 0;
-      let sy = 0;
-      let sWidth = image.naturalWidth;
-      let sHeight = image.naturalHeight;
+    // Move o eixo do Canvas para o centro exato (540, 540)
+    ctx.translate(OUTPUT_SIZE / 2, OUTPUT_SIZE / 2);
 
-      if (imgAspect > 1) {
-        // Imagem horizontal: corta laterais para manter 1:1 sem distorcer
-        sWidth = image.naturalHeight;
-        sx = (image.naturalWidth - sWidth) / 2;
-      } else if (imgAspect < 1) {
-        // Imagem vertical: corta topo/base para manter 1:1 sem distorcer
-        sHeight = image.naturalWidth;
-        sy = (image.naturalHeight - sHeight) / 2;
-      }
+    // Aplica o Arrastar (Pan) convertido da tela para a escala de 1080
+    ctx.translate(position.x * ratio, position.y * ratio);
 
-      ctx.drawImage(image, sx, sy, sWidth, sHeight, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
-    }
+    // Aplica o Zoom (Scale)
+    ctx.scale(scale, scale);
 
+    // D. Calcula o tamanho "object-fit: cover" para o Canvas
+    const scaleFactor = Math.max(
+      OUTPUT_SIZE / image.naturalWidth,
+      OUTPUT_SIZE / image.naturalHeight,
+    );
+    const drawW = image.naturalWidth * scaleFactor;
+    const drawH = image.naturalHeight * scaleFactor;
+
+    // Desenha a imagem exatamente centralizada antes das transformações agirem
+    ctx.drawImage(image, -drawW / 2, -drawH / 2, drawW, drawH);
     ctx.restore();
 
     // E. Desenha a moldura por cima cobrindo a beirada da foto
@@ -152,7 +146,7 @@ export default function Molduras() {
 
     frameImg.onerror = () => {
       alert(
-        "Erro ao aplicar a moldura. Verifique se o arquivo 'moldura-1.png' existe na pasta public/molduras.",
+        "Erro ao aplicar a moldura. Verifique se o arquivo 'moldura-1.png' existe na pasta public/imagens-molduras.",
       );
     };
 
@@ -161,18 +155,6 @@ export default function Molduras() {
 
   return (
     <div className="min-h-screen bg-andreia-darkest text-white font-sans flex items-center section-pad">
-      {/* Estilo embutido para remover bordas sujas e esconder os puxadores */}
-      <style>{`
-        .ReactCrop__crop-selection {
-          border: none !important;
-          box-shadow: none !important;
-          background: transparent !important;
-        }
-        .ReactCrop__drag-handle {
-          display: none !important;
-        }
-      `}</style>
-
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center px-6 md:px-12">
         {/* Coluna da Esquerda: Textos e Controles */}
         <div className="space-y-6">
@@ -189,7 +171,7 @@ export default function Molduras() {
           </p>
 
           <p className="text-sm text-andreia-light/80">
-            Arraste a foto para posicionar • pinça ou rolagem para o zoom
+            Arraste a foto com o dedo para posicionar • Use a barra para o zoom
           </p>
 
           <div className="bg-andreia-dark p-8 rounded-radius-2xl shadow-card border border-andreia space-y-6">
@@ -226,15 +208,7 @@ export default function Molduras() {
 
               <div className="grid grid-cols-2 gap-4">
                 <button
-                  onClick={() =>
-                    setCrop(
-                      centerAspectCrop(
-                        imgRef.current?.width || 100,
-                        imgRef.current?.height || 100,
-                        1,
-                      ),
-                    )
-                  }
+                  onClick={centerImage}
                   className="bg-transparent border-2 border-andreia py-3.5 rounded-radius-lg font-semibold text-white hover:bg-andreia transition-colors"
                 >
                   Centralizar
@@ -256,57 +230,54 @@ export default function Molduras() {
           </button>
         </div>
 
-        {/* Coluna da Direita: Preview Visual */}
+        {/* Coluna da Direita: Preview Visual Interativo */}
         <div className="flex justify-center relative">
-          <div className="relative w-full max-w-md aspect-square rounded-full flex items-center justify-center m-0 p-0 shadow-card bg-transparent border-4 border-andreia-dark">
-            {/* 1. Camada de Fundo */}
-            <div
-              className={`absolute inset-0 w-full h-full rounded-full ${bgColor === "white" ? "bg-white" : "bg-transparent"}`}
-            ></div>
+          <div
+            ref={containerRef}
+            // `touch-none` é obrigatório para evitar que o mobile role a tela ao arrastar a foto
+            className="relative w-full max-w-md aspect-square rounded-full flex items-center justify-center m-0 p-0 shadow-card border-4 border-andreia-dark overflow-hidden touch-none"
+            style={{
+              backgroundColor: bgColor === "white" ? "#FFFFFF" : "transparent",
+              cursor: imgSrc ? (isDragging ? "grabbing" : "grab") : "default",
+            }}
+            onPointerDown={imgSrc ? handlePointerDown : undefined}
+            onPointerMove={imgSrc ? handlePointerMove : undefined}
+            onPointerUp={imgSrc ? handlePointerUp : undefined}
+            onPointerCancel={imgSrc ? handlePointerUp : undefined}
+          >
+            {/* 1. Camada da Foto */}
+            {!imgSrc ? (
+              <label className="w-full h-full flex flex-col items-center justify-center text-andreia-light cursor-pointer hover:bg-andreia-darkest/50 transition-colors z-20">
+                <Upload className="w-16 h-16 mb-4 opacity-50" />
+                <span className="font-semibold text-lg">Clique para subir sua foto</span>
+                <input type="file" accept="image/*" onChange={onSelectFile} className="hidden" />
+              </label>
+            ) : (
+              <img
+                ref={imgRef}
+                alt="Sua foto arrastável"
+                src={imgSrc}
+                // O pointer-events-none repassa o clique do mouse/toque para a div Container gerenciar o movimento
+                className="absolute max-w-none pointer-events-none select-none"
+                style={{
+                  top: "50%",
+                  left: "50%",
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover", // Garante preenchimento total da moldura
+                  transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(${scale})`,
+                }}
+              />
+            )}
 
-            {/* 2. Camada da Foto com clip-path */}
-            <div
-              className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden rounded-full"
-              style={{ clipPath: "circle(48% at 50% 50%)" }}
-            >
-              {!imgSrc ? (
-                <label className="w-full h-full flex flex-col items-center justify-center text-andreia-light cursor-pointer hover:bg-andreia-darkest/50 transition-colors z-20">
-                  <Upload className="w-16 h-16 mb-4 opacity-50" />
-                  <span className="font-semibold text-lg">Clique para subir sua foto</span>
-                  <input type="file" accept="image/*" onChange={onSelectFile} className="hidden" />
-                </label>
-              ) : (
-                <ReactCrop
-                  crop={crop}
-                  onChange={(c: Crop) => setCrop(c)}
-                  onComplete={(c: PixelCrop) => setCompletedCrop(c)}
-                  aspect={1}
-                  circularCrop
-                  className="w-full h-full flex items-center justify-center"
-                >
-                  <img
-                    ref={imgRef}
-                    alt="Sua foto"
-                    src={imgSrc}
-                    style={{
-                      transform: `scale(${scale})`,
-                      transformOrigin: "center",
-                    }}
-                    onLoad={onImageLoad}
-                    className="max-w-full max-h-full mx-auto"
-                  />
-                </ReactCrop>
-              )}
-            </div>
-
-            {/* 3. Camada da Moldura Perfeita e Tratada */}
+            {/* 2. Camada da Moldura Fixa por Cima */}
             <img
               src={MOLDURA_PADRAO}
               alt="Moldura Visualização"
               crossOrigin="anonymous"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10 m-0 p-0"
+              className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10 m-0 p-0 select-none"
               onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                (e.target as HTMLImageElement).style.display = "none"; // Se não achar a moldura-1.png oculta do preview
+                (e.target as HTMLImageElement).style.display = "none";
               }}
             />
           </div>
