@@ -1,28 +1,33 @@
 import { ArrowRight, HeartHandshake } from "lucide-react";
 import foto from "@/assets/foto-andreia.png";
-// Importe as 3 versões da sua imagem de capa
-import rioDesktop from "@/assets/Capa.webp";
-import rioTablet from "@/assets/Capa-tablet.webp";
-import rioMobile from "@/assets/Capa-mobile.webp";
+
+// Importe as 4 versões da sua imagem de capa
+import rioLargeDesktop from "@/assets/Capa.webp"; // Para >= 1440px
+import rioDesktop from "@/assets/capa-desktop.webp"; // Para >= 1024px
+import rioTablet from "@/assets/Capa-tablet.webp"; // Para >= 768px
+import rioMobile from "@/assets/Capa-mobile.webp"; // Padrão (Mobile)
 
 export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative overflow-hidden bg-gradient-andreia pt-16 md:pt-8 lg:pt-20"
+      className="relative overflow-hidden bg-gradient-andreia pt-16 md:pt-16 lg:pt-20"
     >
       <picture>
-        {/* Quando a tela for 1024px ou maior (Desktop), usa essa imagem */}
+        {/* 1. Telas ultra largas (1440px ou maior) */}
+        <source media="(min-width: 1440px)" srcSet={rioLargeDesktop} />
+
+        {/* 2. Desktop padrão (1024px ou maior) */}
         <source media="(min-width: 1024px)" srcSet={rioDesktop} />
 
-        {/* Quando a tela for 768px ou maior (Tablet), usa essa imagem */}
+        {/* 3. Tablet (768px ou maior) */}
         <source media="(min-width: 768px)" srcSet={rioTablet} />
 
-        {/* Imagem padrão (Mobile). É aqui que o Tailwind controla o tamanho em cada tela */}
+        {/* 4. Imagem padrão (Mobile). É aqui que o Tailwind controla o tamanho em cada tela */}
         <img
           src={rioMobile}
           alt="Foto da Deputada Federal Andréia Siqueira"
-          className="w-full object-cover object-center h-[500px] md:h-[900px] lg:h-[900px]"
+          className="w-full object-cover h-[500px] md:h-[900px] lg:h-[900px] min-[1440px]:h-[900px]"
         />
       </picture>
     </section>
