@@ -19,18 +19,18 @@ const LINKS = [
   {
     id: "2",
     title: "FIGURINHAS DO WHATSAPP",
-    url: "https://andreiasiqueira2026.com.br/sticker-gallery",
+    url: "https://www.andreiasiqueira2026.com.br/sticker-gallery",
   },
   {
     id: "3",
     title: "FOTO DE PERFIL - MOLDURA",
-    url: "https://andreiasiqueira2026.com.br/molduras",
+    url: "https://www.andreiasiqueira2026.com.br/molduras",
   },
   {
     id: "4",
 
     title: "SITE OFICIAL",
-    url: "https://andreiasiqueira2026.com.br",
+    url: "https://www.andreiasiqueira2026.com.br",
   },
 ];
 
