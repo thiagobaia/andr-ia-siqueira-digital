@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as Eleicoes2026RouteImport } from './routes/eleicoes2026'
+import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as LinktreeRouteImport } from './routes/linktree'
 import { Route as MoldurasRouteImport } from './routes/molduras'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
@@ -25,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
 const Eleicoes2026Route = Eleicoes2026RouteImport.update({
   id: '/eleicoes2026',
   path: '/eleicoes2026',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LinktreeRoute = LinktreeRouteImport.update({
@@ -56,6 +62,7 @@ const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
+  '/galeria': typeof GaleriaRoute
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
+  '/galeria': typeof GaleriaRoute
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
+  '/galeria': typeof GaleriaRoute
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/eleicoes2026'
+    | '/galeria'
     | '/linktree'
     | '/molduras'
     | '/privacidade'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/eleicoes2026'
+    | '/galeria'
     | '/linktree'
     | '/molduras'
     | '/privacidade'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/eleicoes2026'
+    | '/galeria'
     | '/linktree'
     | '/molduras'
     | '/privacidade'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   Eleicoes2026Route: typeof Eleicoes2026Route
+  GaleriaRoute: typeof GaleriaRoute
   LinktreeRoute: typeof LinktreeRoute
   MoldurasRoute: typeof MoldurasRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/eleicoes2026'
       fullPath: '/eleicoes2026'
       preLoaderRoute: typeof Eleicoes2026RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/linktree': {
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   Eleicoes2026Route: Eleicoes2026Route,
+  GaleriaRoute: GaleriaRoute,
   LinktreeRoute: LinktreeRoute,
   MoldurasRoute: MoldurasRoute,
   PrivacidadeRoute: PrivacidadeRoute,
