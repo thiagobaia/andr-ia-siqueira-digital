@@ -7,6 +7,7 @@ const links = [
   { href: "#raizes", label: "Raízes" },
   { href: "#bandeiras", label: "Bandeiras de Luta" },
   { href: "#projetos", label: "Projetos" },
+  { href: "/galeria", label: "Galeria" },
   { href: "#contato", label: "Contato" },
 ];
 

@@ -323,7 +323,7 @@ export function GaleriaDrive() {
                     return (
                       <div
                         key={foto.id}
-                        className="overflow-hidden shadow-card  flex flex-col  transition-all hover:border-andreia group relative"
+                        className="overflow-hidden flex flex-col  transition-all group relative"
                       >
                         {/* Botão de Download Discreto no Cantinho Superior Direito */}
                         <button
