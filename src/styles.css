@@ -12,8 +12,10 @@
   --color-andreia-darkest: oklch(0.37 0.144 259);
   --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
-}
 
+  /* Adicionando o breakpoint de 1440px */
+  --breakpoint-3xl: 1440px;
+}
 
 /*
  * Design system definition.
@@ -165,17 +167,33 @@
   --ring: var(--color-andreia);
   --foreground: oklch(0.25 0.03 258);
   --muted-foreground: oklch(0.5 0.02 258);
-  --gradient-andreia: linear-gradient(135deg, var(--color-andreia-darkest), var(--color-andreia-dark) 55%, var(--color-andreia) 100%);
-  --gradient-cyan: linear-gradient(120deg, var(--color-andreia) 0%, var(--color-andreia-light) 100%);
-  --shadow-card: 0 18px 45px -22px color-mix(in oklab, var(--color-andreia-darkest) 45%, transparent);
-  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--color-andreia-light) 35%, transparent), 0 25px 60px -30px color-mix(in oklab, var(--color-andreia) 60%, transparent);
+  --gradient-andreia: linear-gradient(
+    135deg,
+    var(--color-andreia-darkest),
+    var(--color-andreia-dark) 55%,
+    var(--color-andreia) 100%
+  );
+  --gradient-cyan: linear-gradient(
+    120deg,
+    var(--color-andreia) 0%,
+    var(--color-andreia-light) 100%
+  );
+  --shadow-card: 0 18px 45px -22px
+    color-mix(in oklab, var(--color-andreia-darkest) 45%, transparent);
+  --shadow-glow:
+    0 0 0 1px color-mix(in oklab, var(--color-andreia-light) 35%, transparent),
+    0 25px 60px -30px color-mix(in oklab, var(--color-andreia) 60%, transparent);
 }
 
 @layer base {
   body {
     font-family: var(--font-sans);
   }
-  h1, h2, h3, h4, .font-display {
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
     font-family: var(--font-display);
   }
 }

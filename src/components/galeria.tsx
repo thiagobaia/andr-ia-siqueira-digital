@@ -5,7 +5,8 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
-
+import capagaleria from "@/assets/galeria-capa.webp";
+import fundo from "@/assets/FUNDO.webp";
 // Tipagens
 interface DriveFile {
   id: string;
@@ -71,11 +72,10 @@ function ImagemCarregavel({
   );
 }
 
-const CACHE_KEY = "galeria_4010_subpastas_v3";
-
 export function GaleriaDrive() {
   const [secoes, setSecoes] = useState<GaleriaSection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [erroCarregamento, setErroCarregamento] = useState<string | null>(null);
 
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [visibleCounts, setVisibleCounts] = useState<Record<string, number>>({});
@@ -84,29 +84,28 @@ export function GaleriaDrive() {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Estados do Download (NOVO: controla loading por foto e erros)
+  // Estados do Download (controla loading por foto e erros)
   const [baixando, setBaixando] = useState<Record<string, boolean>>({});
   const [erroDownload, setErroDownload] = useState<string | null>(null);
 
   const apiKey = import.meta.env["VITE_GOOGLE_DRIVE_API_KEY"];
   const pastaMaeId = import.meta.env["VITE_ID_PASTA_MAE"];
 
+  // REMOVIDO: cache em sessionStorage.
+  // Antes, uma vez que os dados eram salvos no sessionStorage, o
+  // componente parava de consultar a API do Google Drive e passava a
+  // usar sempre a versão antiga — então pastas novas criadas dentro da
+  // pasta raiz nunca apareciam até o cache expirar manualmente.
+  // Agora, toda vez que o navegador é atualizado (F5) ou a página é
+  // aberta, o componente busca os dados direto na API, então qualquer
+  // subpasta nova criada dentro da pasta raiz aparece automaticamente,
+  // sem precisar de botão de atualizar.
   useEffect(() => {
     async function carregarTudo() {
+      setLoading(true);
+      setErroCarregamento(null);
+
       try {
-        const cache = sessionStorage.getItem(CACHE_KEY);
-        if (cache) {
-          const dadosCacheados: GaleriaSection[] = JSON.parse(cache);
-          setSecoes(dadosCacheados);
-
-          const initialCounts: Record<string, number> = {};
-          dadosCacheados.forEach((sec) => (initialCounts[sec.folderId] = 8));
-          setVisibleCounts(initialCounts);
-
-          setLoading(false);
-          return;
-        }
-
         const queryPastas = `'${pastaMaeId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`;
         const urlPastas = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(queryPastas)}&key=${apiKey}&fields=files(id,name,createdTime)&pageSize=1000`;
 
@@ -123,9 +122,8 @@ export function GaleriaDrive() {
 
         const galeriasCompletas = await Promise.all(
           subpastas.map(async (pasta) => {
-            // CORRIGIDO: incluído "mimeType" nos fields para sabermos
-            // qual extensão usar no download quando o nome do arquivo
-            // não tiver uma.
+            // Inclui "mimeType" nos fields para sabermos qual extensão
+            // usar no download quando o nome do arquivo não tiver uma.
             const queryFotos = `'${pasta.id}' in parents and mimeType contains 'image/' and trashed=false`;
             const urlFotos = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(queryFotos)}&key=${apiKey}&fields=files(id,name,thumbnailLink,mimeType)&pageSize=1000`;
 
@@ -143,13 +141,19 @@ export function GaleriaDrive() {
         const galeriasValidas = galeriasCompletas.filter((secao) => secao.photos.length > 0);
 
         setSecoes(galeriasValidas);
-        sessionStorage.setItem(CACHE_KEY, JSON.stringify(galeriasValidas));
 
         const initialCounts: Record<string, number> = {};
         galeriasValidas.forEach((sec) => (initialCounts[sec.folderId] = 8));
         setVisibleCounts(initialCounts);
+
+        // Garante que, se a página atual ficou fora do intervalo
+        // (por exemplo, uma pasta foi removida), voltamos para a página 1.
+        setPaginaAtual((atual) => (atual > galeriasValidas.length ? 1 : atual));
       } catch (error) {
         console.error(error);
+        setErroCarregamento(
+          "Não foi possível carregar a galeria. Verifique sua conexão e tente novamente.",
+        );
       } finally {
         setLoading(false);
       }
@@ -183,7 +187,6 @@ export function GaleriaDrive() {
     }
   };
 
-  // FUNÇÃO CORRIGIDA
   // Problema original: quando o fetch falhava, o catch chamava
   // window.open() depois de um await — a maioria dos navegadores
   // bloqueia esse popup por não estar mais dentro do gesto síncrono
@@ -254,14 +257,35 @@ export function GaleriaDrive() {
   const temMaisFotos = fotosDaSecaoAtual.length > limiteAtual;
 
   return (
-    <div className="min-h-screen bg-andreia-darkest text-white pb-12">
-      <header className="sticky top-0 z-40 w-full bg-andreia-darkest/85 backdrop-blur-md border-b border-andreia/30 py-5 shadow-card">
-        <h1 className="text-center text-3xl md:text-4xl font-display font-bold text-white tracking-widest uppercase text-gradient-andreia">
-          Galeria 4010
-        </h1>
+    <div
+      style={{ backgroundImage: `url(${fundo})` }}
+      className="min-h-screen bg-andreia-darkest text-white pb-12 bg-cover bg-center bg-no-repeat"
+    >
+      <header className="sticky top-0 z-40 w-full">
+        <div className="flex justify-center items-center w-full p-4">
+          <img
+            src={capagaleria}
+            alt="Descrição da imagem"
+            className="max-w-full h-[500px] block rounded-lg shadow-md"
+          />
+        </div>
       </header>
 
-      {/* NOVO: aviso de erro de download, fica fixo no topo */}
+      {/* Aviso de erro de carregamento geral da galeria */}
+      {erroCarregamento && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm max-w-md text-center flex items-center gap-3">
+          <span>{erroCarregamento}</span>
+          <button
+            onClick={() => setErroCarregamento(null)}
+            className="font-bold text-lg leading-none"
+            aria-label="Fechar aviso"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Aviso de erro de download, fica fixo no topo */}
       {erroDownload && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm max-w-md text-center flex items-center gap-3">
           <span>{erroDownload}</span>
@@ -284,14 +308,11 @@ export function GaleriaDrive() {
           <>
             {secaoAtual && (
               <section className="animate-fade-in flex flex-col min-h-[60vh]">
-                <h2 className="text-2xl md:text-3xl font-display font-bold mb-6 uppercase text-white flex items-center gap-3 border-b border-andreia/20 pb-4">
+                <div className="text-´[12px] md:text-2xl font-display font-bold mb-6 uppercase text-white flex items-center gap-3 border-b border-andreia/20 pb-4">
                   {secaoAtual.folderName}
-                  <span className="text-sm font-sans font-normal bg-andreia-dark px-3 py-1 rounded-full text-andreia-light border border-andreia/30">
-                    {fotosDaSecaoAtual.length} fotos
-                  </span>
-                </h2>
+                </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 grow">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 grow">
                   {fotosVisiveis.map((foto) => {
                     const miniaturaOtimizada = foto.thumbnailLink
                       ? foto.thumbnailLink.replace("=s220", "=w500")
@@ -302,7 +323,7 @@ export function GaleriaDrive() {
                     return (
                       <div
                         key={foto.id}
-                        className="rounded-xl overflow-hidden shadow-card  flex flex-col  transition-all hover:border-andreia group relative"
+                        className="overflow-hidden shadow-card  flex flex-col  transition-all hover:border-andreia group relative"
                       >
                         {/* Botão de Download Discreto no Cantinho Superior Direito */}
                         <button
@@ -311,7 +332,7 @@ export function GaleriaDrive() {
                             baixarFoto(foto.id, foto.name, foto.mimeType);
                           }}
                           disabled={estaBaixando}
-                          className="absolute top-6 right-1 z-30 hover:bg-andreia-darkest text-andreia-light hover:text-white p-2 rounded-full backdrop-blur-sm transition-all border border-andreia/30 shadow-md disabled:opacity-50 disabled:cursor-wait"
+                          className="absolute top-2 md:top-2 xl:top-2 right-1 z-30 hover:bg-andreia-darkest text-andreia-light hover:text-white p-2 rounded-full backdrop-blur-sm transition-all border border-andreia/30 shadow-md disabled:opacity-50 disabled:cursor-wait"
                           title="Baixar foto"
                         >
                           {estaBaixando ? (
@@ -352,7 +373,7 @@ export function GaleriaDrive() {
                         {/* Imagem clicável para abrir o Modal */}
                         <div
                           onClick={() => abrirModal(foto.id)}
-                          className="cursor-pointer overflow-hidden relative h-56 bg-andreia-darkest/50 flex items-center justify-center"
+                          className="cursor-pointer rounded-sm overflow-hidden relative h-96 lg:h-76 bg-andreia-darkest/50 flex items-center justify-center"
                         >
                           <div className="absolute inset-0 bg-andreia-darkest/20 group-hover:bg-transparent transition-colors z-20" />
                           <ImagemCarregavel
