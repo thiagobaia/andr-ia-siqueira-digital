@@ -261,12 +261,12 @@ export function GaleriaDrive() {
       style={{ backgroundImage: `url(${fundo})` }}
       className="min-h-screen bg-andreia-darkest text-white pb-12 bg-cover bg-center bg-no-repeat"
     >
-      <header className="sticky top-0 z-40 w-full">
+      <header className="top-0 w-full">
         <div className="flex justify-center items-center w-full p-4">
           <img
             src={capagaleria}
             alt="Descrição da imagem"
-            className="max-w-full h-[500px] block rounded-lg shadow-md"
+            className="max-w-full object-cover h-[500px] rounded-lg shadow-md"
           />
         </div>
       </header>
