@@ -25,6 +25,19 @@ interface GaleriaSection {
   photos: DriveFile[];
 }
 
+// Normaliza o nome da pasta para uso em caminhos (sem acentos, minúsculo,
+// espaços e caracteres especiais viram hífen). Ex: "Casamento André & Ana"
+// -> "casamento-andre-ana"
+function normalizarNomePasta(nome: string): string {
+  return nome
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-+|-+$)/g, "");
+}
+
 // 1. Componente de Spinner isolado
 const LoadingSpinner = () => (
   <div role="status" className="absolute inset-0 flex items-center justify-center z-0">
@@ -80,7 +93,9 @@ export function GaleriaDrive() {
   const [loading, setLoading] = useState(true);
   const [erroCarregamento, setErroCarregamento] = useState<string | null>(null);
 
-  const [paginaAtual, setPaginaAtual] = useState(1);
+  // Substitui a antiga paginação: agora navegamos entre a grade de pastas
+  // (pastaSelecionadaId === null) e a visualização interna de uma pasta.
+  const [pastaSelecionadaId, setPastaSelecionadaId] = useState<string | null>(null);
   const [visibleCounts, setVisibleCounts] = useState<Record<string, number>>({});
 
   // Estados do Modal Lightbox
@@ -90,6 +105,9 @@ export function GaleriaDrive() {
   // Estados do Download (controla loading por foto e erros)
   const [baixando, setBaixando] = useState<Record<string, boolean>>({});
   const [erroDownload, setErroDownload] = useState<string | null>(null);
+
+  // Estado do botão de copiar caminho da pasta
+  const [caminhoCopiado, setCaminhoCopiado] = useState(false);
 
   const apiKey = import.meta.env["VITE_GOOGLE_DRIVE_API_KEY"];
   const pastaMaeId = import.meta.env["VITE_ID_PASTA_MAE"];
@@ -149,9 +167,11 @@ export function GaleriaDrive() {
         galeriasValidas.forEach((sec) => (initialCounts[sec.folderId] = 8));
         setVisibleCounts(initialCounts);
 
-        // Garante que, se a página atual ficou fora do intervalo
-        // (por exemplo, uma pasta foi removida), voltamos para a página 1.
-        setPaginaAtual((atual) => (atual > galeriasValidas.length ? 1 : atual));
+        // Se a pasta atualmente selecionada não existir mais (ex: foi
+        // removida ou ficou sem fotos), volta para a grade principal.
+        setPastaSelecionadaId((atual) =>
+          atual && !galeriasValidas.some((s) => s.folderId === atual) ? null : atual,
+        );
       } catch (error) {
         console.error(error);
         setErroCarregamento(
@@ -172,14 +192,17 @@ export function GaleriaDrive() {
     }));
   };
 
-  const mudarPagina = (novaPagina: number) => {
-    if (novaPagina >= 1 && novaPagina <= secoes.length) {
-      setPaginaAtual(novaPagina);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+  const abrirPasta = (folderId: string) => {
+    setPastaSelecionadaId(folderId);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const secaoAtual = secoes[paginaAtual - 1];
+  const voltarParaGaleria = () => {
+    setPastaSelecionadaId(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const secaoAtual = secoes.find((s) => s.folderId === pastaSelecionadaId);
   const fotosDaSecaoAtual = secaoAtual ? secaoAtual.photos : [];
 
   const abrirModal = (fotoId: string) => {
@@ -187,6 +210,23 @@ export function GaleriaDrive() {
     if (index !== -1) {
       setCurrentIndex(index);
       setModalOpen(true);
+    }
+  };
+
+  // Copia o caminho estruturado da pasta atual (ex: "galeria/casamento-2026")
+  // para a área de transferência, com feedback visual rápido no botão.
+  const copiarCaminhoPasta = async () => {
+    if (!secaoAtual) return;
+
+    const caminho = `galeria/${normalizarNomePasta(secaoAtual.folderName)}`;
+
+    try {
+      await navigator.clipboard.writeText(caminho);
+      setCaminhoCopiado(true);
+      setTimeout(() => setCaminhoCopiado(false), 2000);
+    } catch (error) {
+      console.error("Falha ao copiar caminho da pasta:", error);
+      setErroDownload("Não foi possível copiar o caminho da pasta.");
     }
   };
 
@@ -316,198 +356,224 @@ export function GaleriaDrive() {
           <p className="text-center text-andreia-light">
             Nenhuma subpasta com fotos foi encontrada.
           </p>
+        ) : !secaoAtual ? (
+          /* ------------------------------------------------------------
+           * GRADE DE PASTAS (página principal, sem paginação)
+           * ------------------------------------------------------------ */
+          <section className="animate-fade-in">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {secoes.map((secao) => {
+                const capa = secao.photos[0];
+                const miniaturaCapa = capa?.thumbnailLink
+                  ? capa.thumbnailLink.replace("=s220", "=w500")
+                  : capa
+                    ? `https://www.googleapis.com/drive/v3/files/${capa.id}?alt=media&key=${apiKey}`
+                    : "";
+
+                return (
+                  <button
+                    key={secao.folderId}
+                    onClick={() => abrirPasta(secao.folderId)}
+                    className="group flex flex-col text-left rounded-lg overflow-hidden border border-andreia/20 bg-andreia-dark/30 hover:border-andreia/60 hover:-translate-y-1 transition-all duration-300 shadow-md"
+                  >
+                    <div className="relative w-full aspect-square bg-andreia-darkest/50 overflow-hidden">
+                      {miniaturaCapa && (
+                        <ImagemCarregavel
+                          src={miniaturaCapa}
+                          alt={secao.folderName}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-in-out"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-andreia-darkest/10 group-hover:bg-transparent transition-colors" />
+                    </div>
+                    <div className="w-full px-3 py-3">
+                      <h3 className="text-sm md:text-base font-display font-semibold uppercase text-white truncate">
+                        {secao.folderName}
+                      </h3>
+                      <p className="text-xs text-andreia-light mt-1">
+                        {secao.photos.length} foto{secao.photos.length !== 1 ? "s" : ""}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
         ) : (
-          <>
-            {secaoAtual && (
-              <section className="animate-fade-in flex flex-col min-h-[60vh]">
-                <div className="text-´[12px] md:text-2xl font-display font-bold mb-6 uppercase text-white flex items-center gap-3 border-b border-andreia/20 pb-4">
-                  {secaoAtual.folderName}
-                </div>
+          /* ------------------------------------------------------------
+           * VISUALIZAÇÃO INTERNA DA PASTA (fotos)
+           * ------------------------------------------------------------ */
+          <section className="animate-fade-in flex flex-col min-h-[60vh]">
+            <div className="flex items-center justify-between gap-3 mb-6 border-b border-andreia/20 pb-4">
+              <button
+                onClick={voltarParaGaleria}
+                className="flex items-center gap-2 text-andreia-light hover:text-white transition-colors text-sm font-medium shrink-0"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+                Voltar
+              </button>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 grow">
-                  {fotosVisiveis.map((foto) => {
-                    const miniaturaOtimizada = foto.thumbnailLink
-                      ? foto.thumbnailLink.replace("=s220", "=w500")
-                      : `https://www.googleapis.com/drive/v3/files/${foto.id}?alt=media&key=${apiKey}`;
+              <div className="text-base md:text-2xl font-display font-bold uppercase text-white text-center flex-1 truncate">
+                {secaoAtual.folderName}
+              </div>
 
-                    const estaBaixando = !!baixando[foto.id];
-
-                    return (
-                      <div
-                        key={foto.id}
-                        className="overflow-hidden flex flex-col  transition-all group relative"
-                      >
-                        {/* Botão de Download Discreto no Cantinho Superior Direito */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation(); // Evita abrir o modal ao clicar no botão
-                            baixarFoto(foto.id, foto.name, foto.mimeType);
-                          }}
-                          disabled={estaBaixando}
-                          className="absolute top-2 md:top-2 xl:top-2 right-1 z-30 hover:bg-andreia-darkest text-andreia-light hover:text-white p-2 rounded-full backdrop-blur-sm transition-all border border-andreia/30 shadow-md disabled:opacity-50 disabled:cursor-wait"
-                          title="Baixar foto"
-                        >
-                          {estaBaixando ? (
-                            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              />
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                              <polyline points="7 10 12 15 17 10" />
-                              <line x1="12" x2="12" y1="15" y2="3" />
-                            </svg>
-                          )}
-                        </button>
-
-                        {/* Imagem clicável para abrir o Modal */}
-                        <div
-                          onClick={() => abrirModal(foto.id)}
-                          className="cursor-pointer rounded-sm overflow-hidden relative h-96 lg:h-76 bg-andreia-darkest/50 flex items-center justify-center"
-                        >
-                          <div className="absolute inset-0 bg-andreia-darkest/20 group-hover:bg-transparent transition-colors z-20" />
-                          <ImagemCarregavel
-                            src={miniaturaOtimizada}
-                            alt={foto.name}
-                            className="w-full h-auto object-cover hover:scale-110 transition-transform duration-500 ease-in-out"
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {temMaisFotos && (
-                  <div className="flex justify-center mt-12 mb-8">
-                    <button
-                      onClick={() => carregarMaisFotos(secaoAtual.folderId)}
-                      className="bg-transparent hover:bg-andreia-dark text-white font-sans font-medium py-3 px-8 rounded-full border border-andreia/50 transition-all active:scale-95 shadow-md flex items-center gap-2 group"
+              {/* Botão de copiar caminho da pasta */}
+              <button
+                onClick={copiarCaminhoPasta}
+                className="hidden items-center gap-2 bg-andreia-dark hover:bg-andreia/20 text-andreia-light hover:text-white px-3 py-2 rounded-full border border-andreia/30 shadow-md transition-all text-xs md:text-sm font-medium shrink-0"
+                title="Copiar caminho da pasta"
+              >
+                {caminhoCopiado ? (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      Carregar mais fotos desta pasta
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="group-hover:translate-y-1 transition-transform"
-                      >
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span className="hidden sm:inline">Copiado!</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                    </svg>
+                    <span className="hidden sm:inline">Copiar caminho</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 grow">
+              {fotosVisiveis.map((foto) => {
+                const miniaturaOtimizada = foto.thumbnailLink
+                  ? foto.thumbnailLink.replace("=s220", "=w500")
+                  : `https://www.googleapis.com/drive/v3/files/${foto.id}?alt=media&key=${apiKey}`;
+
+                const estaBaixando = !!baixando[foto.id];
+
+                return (
+                  <div
+                    key={foto.id}
+                    className="overflow-hidden flex flex-col  transition-all group relative"
+                  >
+                    {/* Botão de Download Discreto no Cantinho Superior Direito */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Evita abrir o modal ao clicar no botão
+                        baixarFoto(foto.id, foto.name, foto.mimeType);
+                      }}
+                      disabled={estaBaixando}
+                      className="absolute top-2 md:top-2 xl:top-2 right-1 z-30 hover:bg-andreia-darkest text-andreia-light hover:text-white p-2 rounded-full backdrop-blur-sm transition-all border border-andreia/30 shadow-md disabled:opacity-50 disabled:cursor-wait"
+                      title="Baixar foto"
+                    >
+                      {estaBaixando ? (
+                        <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" x2="12" y1="15" y2="3" />
+                        </svg>
+                      )}
                     </button>
+
+                    {/* Imagem clicável para abrir o Modal */}
+                    <div
+                      onClick={() => abrirModal(foto.id)}
+                      className="cursor-pointer rounded-sm overflow-hidden relative h-96 lg:h-76 bg-andreia-darkest/50 flex items-center justify-center"
+                    >
+                      <div className="absolute inset-0 bg-andreia-darkest/20 group-hover:bg-transparent transition-colors z-20" />
+                      <ImagemCarregavel
+                        src={miniaturaOtimizada}
+                        alt={foto.name}
+                        className="w-full h-auto object-cover hover:scale-110 transition-transform duration-500 ease-in-out"
+                      />
+                    </div>
                   </div>
-                )}
+                );
+              })}
+            </div>
 
-                {secoes.length > 1 && (
-                  <div className="flex justify-center mt-16 pt-8 border-t border-andreia/20">
-                    <nav aria-label="Navegação das Pastas">
-                      <ul className="flex flex-wrap items-center justify-center gap-y-2 -space-x-px text-sm">
-                        <li>
-                          <button
-                            onClick={() => mudarPagina(paginaAtual - 1)}
-                            disabled={paginaAtual === 1}
-                            className="flex items-center justify-center bg-andreia-dark border border-andreia/30 text-andreia-light hover:bg-andreia/20 hover:text-white font-medium rounded-s-md text-sm w-10 h-10 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                          >
-                            <span className="sr-only">Anterior</span>
-                            <svg
-                              className="w-4 h-4 rtl:rotate-180"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="24"
-                              height="24"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="m15 19-7-7 7-7"
-                              />
-                            </svg>
-                          </button>
-                        </li>
-
-                        {secoes.map((_, index) => {
-                          const numeroPagina = index + 1;
-                          const ativa = paginaAtual === numeroPagina;
-                          return (
-                            <li key={index}>
-                              <button
-                                onClick={() => mudarPagina(numeroPagina)}
-                                aria-current={ativa ? "page" : undefined}
-                                className={`flex items-center justify-center box-border border text-sm w-10 h-10 focus:outline-none transition-colors font-medium ${
-                                  ativa
-                                    ? "bg-gradient-andreia text-white border-transparent"
-                                    : "bg-andreia-dark border-andreia/30 text-andreia-light hover:bg-andreia/20 hover:text-white"
-                                }`}
-                              >
-                                {numeroPagina}
-                              </button>
-                            </li>
-                          );
-                        })}
-
-                        <li>
-                          <button
-                            onClick={() => mudarPagina(paginaAtual + 1)}
-                            disabled={paginaAtual === secoes.length}
-                            className="flex items-center justify-center bg-andreia-dark border border-andreia/30 text-andreia-light hover:bg-andreia/20 hover:text-white font-medium rounded-e-md text-sm w-10 h-10 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                          >
-                            <span className="sr-only">Próximo</span>
-                            <svg
-                              className="w-4 h-4 rtl:rotate-180"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="24"
-                              height="24"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="m9 5 7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
-                )}
-              </section>
+            {temMaisFotos && (
+              <div className="flex justify-center mt-12 mb-8">
+                <button
+                  onClick={() => carregarMaisFotos(secaoAtual.folderId)}
+                  className="bg-transparent hover:bg-andreia-dark text-white font-sans font-medium py-3 px-8 rounded-full border border-andreia/50 transition-all active:scale-95 shadow-md flex items-center gap-2 group"
+                >
+                  Carregar mais fotos desta pasta
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="group-hover:translate-y-1 transition-transform"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+              </div>
             )}
-          </>
+          </section>
         )}
       </main>
 
