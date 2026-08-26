@@ -5,8 +5,8 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import mobile from "@/assets/CELULAR.webp";
-import tablet from "@/assets/TABLET.webp";
+import capas from "@/assets/CAPA-GALERIA-2.webp";
+import tablet from "@/assets/TABLERT.webp";
 import desktop from "@/assets/DESKTOP.webp";
 import fundo from "@/assets/FUNDO.webp";
 
@@ -306,20 +306,11 @@ export function GaleriaDrive() {
     >
       <header className="top-0 w-full">
         <div className="flex justify-center items-center w-full p-4">
-          <picture className="w-full max-w-full">
-            {/* Desktop (a partir de 1024px) */}
-            <source media="(min-width: 1024px)" srcSet={desktop} />
-
-            {/* Tablet (a partir de 768px até 1023px) */}
-            <source media="(min-width: 768px)" srcSet={tablet} />
-
-            {/* Mobile (padrão para telas menores que 768px) */}
-            <img
-              src={mobile}
-              alt="Descrição da imagem"
-              className="w-full object-cover h-auto rounded-lg shadow-md"
-            />
-          </picture>
+          <img
+            src={capas}
+            alt="Descrição da imagem"
+            className="w-full object-cover h-auto rounded-lg shadow-md"
+          />
         </div>
       </header>
 

@@ -2,7 +2,7 @@ import { ArrowRight, HeartHandshake } from "lucide-react";
 import foto from "@/assets/foto-andreia.png";
 
 // Importe as 4 versões da sua imagem de capa
-import rioLargeDesktop from "@/assets/Capa.webp"; // Para >= 1440px
+import rioLargeDesktop from "@/assets/capa-desktop-large.webp"; // Para >= 1440px
 import rioDesktop from "@/assets/capa-desktop.webp"; // Para >= 1024px
 import rioTablet from "@/assets/Capa-tablet.webp"; // Para >= 768px
 import rioMobile from "@/assets/Capa-mobile.webp"; // Padrão (Mobile)
