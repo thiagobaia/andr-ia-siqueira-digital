@@ -17,6 +17,8 @@ import { Route as MoldurasRouteImport } from './routes/molduras'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as StickerGalleryRouteImport } from './routes/sticker-gallery'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
+import { Route as GaleriaIndexRouteImport } from './routes/galeria.index'
+import { Route as GaleriaFolderIdRouteImport } from './routes/galeria.$folderId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,37 +60,52 @@ const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   path: '/termos-de-uso',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GaleriaIndexRoute = GaleriaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GaleriaRoute,
+} as any)
+const GaleriaFolderIdRoute = GaleriaFolderIdRouteImport.update({
+  id: '/$folderId',
+  path: '/$folderId',
+  getParentRoute: () => GaleriaRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
-  '/galeria': typeof GaleriaRoute
+  '/galeria': typeof GaleriaRouteWithChildren
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sticker-gallery': typeof StickerGalleryRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/galeria/$folderId': typeof GaleriaFolderIdRoute
+  '/galeria/': typeof GaleriaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
-  '/galeria': typeof GaleriaRoute
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sticker-gallery': typeof StickerGalleryRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/galeria/$folderId': typeof GaleriaFolderIdRoute
+  '/galeria': typeof GaleriaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/eleicoes2026': typeof Eleicoes2026Route
-  '/galeria': typeof GaleriaRoute
+  '/galeria': typeof GaleriaRouteWithChildren
   '/linktree': typeof LinktreeRoute
   '/molduras': typeof MoldurasRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sticker-gallery': typeof StickerGalleryRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/galeria/$folderId': typeof GaleriaFolderIdRoute
+  '/galeria/': typeof GaleriaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,16 +118,19 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/sticker-gallery'
     | '/termos-de-uso'
+    | '/galeria/$folderId'
+    | '/galeria/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/eleicoes2026'
-    | '/galeria'
     | '/linktree'
     | '/molduras'
     | '/privacidade'
     | '/sticker-gallery'
     | '/termos-de-uso'
+    | '/galeria/$folderId'
+    | '/galeria'
   id:
     | '__root__'
     | '/'
@@ -121,12 +141,14 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/sticker-gallery'
     | '/termos-de-uso'
+    | '/galeria/$folderId'
+    | '/galeria/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   Eleicoes2026Route: typeof Eleicoes2026Route
-  GaleriaRoute: typeof GaleriaRoute
+  GaleriaRoute: typeof GaleriaRouteWithChildren
   LinktreeRoute: typeof LinktreeRoute
   MoldurasRoute: typeof MoldurasRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -192,13 +214,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermosDeUsoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/galeria/': {
+      id: '/galeria/'
+      path: '/'
+      fullPath: '/galeria/'
+      preLoaderRoute: typeof GaleriaIndexRouteImport
+      parentRoute: typeof GaleriaRoute
+    }
+    '/galeria/$folderId': {
+      id: '/galeria/$folderId'
+      path: '/$folderId'
+      fullPath: '/galeria/$folderId'
+      preLoaderRoute: typeof GaleriaFolderIdRouteImport
+      parentRoute: typeof GaleriaRoute
+    }
   }
 }
+
+interface GaleriaRouteChildren {
+  GaleriaFolderIdRoute: typeof GaleriaFolderIdRoute
+  GaleriaIndexRoute: typeof GaleriaIndexRoute
+}
+
+const GaleriaRouteChildren: GaleriaRouteChildren = {
+  GaleriaFolderIdRoute: GaleriaFolderIdRoute,
+  GaleriaIndexRoute: GaleriaIndexRoute,
+}
+
+const GaleriaRouteWithChildren =
+  GaleriaRoute._addFileChildren(GaleriaRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   Eleicoes2026Route: Eleicoes2026Route,
-  GaleriaRoute: GaleriaRoute,
+  GaleriaRoute: GaleriaRouteWithChildren,
   LinktreeRoute: LinktreeRoute,
   MoldurasRoute: MoldurasRoute,
   PrivacidadeRoute: PrivacidadeRoute,
