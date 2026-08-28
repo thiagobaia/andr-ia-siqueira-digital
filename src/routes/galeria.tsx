@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { GaleriaProvider } from "../components/galeria/GaleriaContext";
-import mobile from "@/assets/CELULAR.webp";
+import mobile from "@/assets/CAPA-GALERIA-2.webp";
 import tablet from "@/assets/TABLET.webp";
 import desktop from "@/assets/DESKTOP.webp";
 import fundo from "@/assets/FUNDO.webp";
@@ -37,10 +37,10 @@ function GaleriaLayout() {
           <div className="flex justify-center items-center w-full p-4">
             <picture className="w-full max-w-full">
               {/* Desktop (a partir de 1024px) */}
-              <source media="(min-width: 1024px)" srcSet={desktop} />
+              <source media="(min-width: 1024px)" srcSet={mobile} />
 
               {/* Tablet (a partir de 768px até 1023px) */}
-              <source media="(min-width: 768px)" srcSet={tablet} />
+              <source media="(min-width: 768px)" srcSet={mobile} />
 
               {/* Mobile (padrão para telas menores que 768px) */}
               <img
